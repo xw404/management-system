@@ -22,5 +22,6 @@ public class Animal {
     private Integer userId;
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Integer createTime;
+    private String picture;
 
 }

@@ -1,4 +1,9 @@
 <template>
+  <div class="login-container"
+       v-bind:style="{backgroundImage:'url(' + bg + ')',
+        backgroundRepeat:'no-repeat',
+        backgroundSize:'100% 100%'}"
+       style="padding: 10px" >
   <div style="padding: 10px">
     <!--    功能区域-->
     <div style="margin: 10px 0">
@@ -11,8 +16,18 @@
       <el-input v-model="search" placeholder="请输入关键字" style = "width: 20%" clearable/>
       <el-button type="primary" style = "margin-left: 5px" @click="load">查询</el-button>
     </div>
+    <div class="table" style="margin-top:20px;">
     <el-table :data="tableData" border stripe style="width: 100%">
       <el-table-column prop="id" label="ID" sortable/>
+      <el-table-column label="图片" >
+        <template #default = "scope">
+          <el-image
+            style="width: 100px; height: 100px"
+            :src="scope.row.picture"
+            :preview-src-list="[scope.row.picture]">
+          </el-image>
+        </template>
+      </el-table-column>
       <el-table-column prop="name" label="宠物名"/>
       <el-table-column prop="kind" label="种类"/>
       <el-table-column prop="love" label="爱心指数"/>
@@ -31,6 +46,7 @@
         </template>
       </el-table-column>
     </el-table>
+    </div>
 
     <div style="margin: 10px 0">
       <el-pagination
@@ -43,7 +59,7 @@
           :total="total">
       </el-pagination>
 
-      <el-dialog v-model="dialogVisible" title="新增">
+      <el-dialog v-model="dialogVisible" title="新增和修改">
         <el-form :model="form" label-width="120px">
           <el-form-item label="宠物名">
             <el-input v-model="form.name" style="width: 80%"/>
@@ -59,9 +75,15 @@
           </el-form-item>
           <el-form-item label="xx测试日期表单">
             <el-date-picker v-model="form.createTime" value-format="YYYY-MM-DD" type="date" style="width: 80%" clearable>
-
             </el-date-picker>
           </el-form-item>
+          <el-form-item label="照片">
+            <el-upload ref="upload"
+                action="http://localhost:9090/files/upload" :on-success="filesUploadSuccess">
+              <el-button type="primary">点击上传</el-button>
+            </el-upload>
+          </el-form-item>
+
         </el-form>
         <template #footer>
       <span class="dialog-footer">
@@ -71,6 +93,7 @@
         </template>
       </el-dialog>
     </div>
+  </div>
   </div>
 </template>
 
@@ -89,13 +112,18 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total:0,
-      tableData: []
+      tableData: [],
+      bg: require('./2.png')     //背景
     }
   },
   created() {
     this.load()
   },
   methods: {
+    filesUploadSuccess(res){
+      console.log(res)
+      this.form.picture=res.data
+    },
     load(){
       request.get("/animal",{
         params:{
@@ -150,10 +178,14 @@ export default {
     add(){
       this.dialogVisible=true
       this.form={}
+      this.$refs['upload'].clearFiles()  //清除上传文件历史
     },
     handleEdit(row){
       this.form = JSON.parse(JSON.stringify(row))
       this.dialogVisible=true
+      this.$nextTick(() => {
+        this.$refs['upload'].clearFiles()  //清除上传文件历史
+      })
     },
     handleDelete(id){
       console.log(id)
@@ -180,7 +212,6 @@ export default {
       this.currentPage =pageNum
       this.load()
     },
-
   }
 }
 </script>

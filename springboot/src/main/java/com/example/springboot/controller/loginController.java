@@ -51,7 +51,7 @@ public class loginController {
         wrapper.eq(Admin::getAdminUser,admin.getAdminUser());
         Admin res = adminMapper.selectOne(wrapper);
         if(res != null){
-            return Result.error("500","管理员用户名重复");
+            return Result.error("500","此用户已经存在");
         }
         //设置默认密码
         if(admin.getAdminPassword()==null){

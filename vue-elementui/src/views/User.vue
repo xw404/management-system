@@ -1,16 +1,26 @@
 <template>
-  <div style="padding: 10px">
+
+  <div class="login-container"
+       v-bind:style="{backgroundImage:'url(' + bg + ')',
+        backgroundRepeat:'no-repeat',
+        backgroundSize:'100% 100%'}"
+    style="padding: 10px" >
+
 <!--    功能区域-->
     <div style="margin: 10px 0">
       <el-button type="primary" @click="add">新增</el-button>
-      <el-button type="primary">导入</el-button>
-      <el-button type="primary">导出</el-button>
+<!--      上传下载未绑定功能-->
+<!--      <el-button type="primary">导入</el-button>-->
+<!--      <el-button type="primary">导出</el-button>-->
     </div>
 <!--    搜索区域-->
     <div style="margin: 10px 0">
-      <el-input v-model="search" placeholder="请输入关键字" style = "width: 20%" clearable/>
+      <el-input v-model="search" placeholder="请输入用户名" style = "width: 20%" clearable/>
       <el-button type="primary" style = "margin-left: 5px" @click="load">查询</el-button>
     </div>
+
+
+    <div class="table" style="margin-top:20px;">
     <el-table :data="tableData" border stripe style="width: 100%">
       <el-table-column prop="id" label="ID" sortable/>
       <el-table-column prop="username" label="用户名"/>
@@ -31,6 +41,7 @@
         </template>
       </el-table-column>
     </el-table>
+    </div>
 
     <div style="margin: 10px 0">
       <el-pagination
@@ -43,7 +54,7 @@
           :total="total">
       </el-pagination>
 
-      <el-dialog v-model="dialogVisible" title="新增">
+      <el-dialog v-model="dialogVisible" title="新增和修改">
         <el-form :model="form" label-width="120px">
           <el-form-item label="用户名">
             <el-input v-model="form.username" style="width: 80%"/>
@@ -84,7 +95,6 @@
 <script>
 
 import request from "@/utils/request";
-
 export default {
   name: 'Home',
   components: {},
@@ -94,9 +104,9 @@ export default {
       dialogVisible:false,
       search: '',
       currentPage: 1,
-      pageSize: 10,
       total:0,
-      tableData: []
+      tableData: [],
+      bg: require('./1.png')     //背景
     }
   },
   created() {
@@ -187,7 +197,6 @@ export default {
       this.currentPage =pageNum
       this.load()
     },
-
   }
 }
 </script>
